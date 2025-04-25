@@ -10,16 +10,9 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
 // Koneksi ke database
 include 'koneksi.php';
 
-// Query untuk mendapatkan saldo pengguna
-$stmt = $mysqli->prepare("SELECT saldo FROM akun_pengguna WHERE id_pengguna = ?");
-$stmt->bind_param("i", $_SESSION["id"]);
-$stmt->execute();
-$stmt->bind_result($saldo);
-$stmt->fetch();
-$stmt->close();
 
 // Query untuk mendapatkan informasi lapangan yang telah dipesan oleh pengguna
-$stmt_lapangan = $mysqli->prepare("SELECT l.nama_lapangan, b.tanggal_booking, b.jam_mulai, b.lama_booking FROM Booking b JOIN Lapangan l ON b.id_lapangan = l.id_lapangan WHERE b.id_pemesan = ?");
+$stmt_lapangan = $mysqli->prepare("SELECT nama_lapangan, tanggal_booking, jam_mulai, lama_booking FROM booking");
 $stmt_lapangan->bind_param("i", $_SESSION["id"]);
 $stmt_lapangan->execute();
 $stmt_lapangan->store_result();
@@ -58,9 +51,7 @@ $stmt_lapangan->store_result();
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="saldo">Saldo Anda: Rp <?php echo $saldo; ?></div>
-        
+    <div class="container">        
         <div class="lapangan-info">
             <h2>Informasi Lapangan yang Telah Dipesan</h2>
             <table>

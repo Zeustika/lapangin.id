@@ -39,3 +39,4 @@ if ($stmt->affected_rows > 0) {
 
 $stmt->close();
 ?>
+    <link rel="icon" type="image/png" href="img/bill.png"/>

@@ -24,3 +24,4 @@ if ($stmt->execute()) {
 }
 $stmt->close();
 ?>
+    <link rel="icon" type="image/png" href="img/bill.png"/>

@@ -1,5 +1,12 @@
 <?php
+session_start();
 include 'koneksi.php';
+
+// Redirect to login if not logged in as admin
+if (!isset($_SESSION['loggedin']) || $_SESSION['role'] !== 'admin') {
+    header("location: login_pengguna.php");
+    exit;
+}
 
 // Proses tambah lapangan jika metode POST digunakan
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -13,9 +20,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt = $mysqli->prepare($sql);
     $stmt->bind_param("ssii", $nama_lapangan, $jenis_lapangan, $harga_sewa, $kapasitas_pemain);
     if ($stmt->execute()) {
-        echo "Lapangan berhasil ditambahkan.";
+        $success_message = "Lapangan berhasil ditambahkan.";
     } else {
-        echo "Terjadi kesalahan: " . $mysqli->error;
+        $error_message = "Terjadi kesalahan: " . $mysqli->error;
     }
     $stmt->close();
 }
@@ -26,30 +33,72 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="img/bill.png"/>
     <title>Tambah Lapangan</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+
+            background: url('img/nack.avif');
+            background-size: 30%;
+        }
+        .card-body {
+            background: url('img/nack.avif');
+            border-radius: 10px;
+        }
+        .text-center {
+            color: #fff;
+            font-family: "Times New Roman", Times, serif;
+        }
+        .text-center{
+            color: #fff;
+        }
+        .container {
+            background-color: #6c757d;
+            border-radius: 5px;
+            padding: 30px;
+        }
+        .btn btn-secondary mt-3{
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
-    <h1>Tambah Lapangan</h1>
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-        <label for="nama_lapangan">Nama Lapangan:</label><br>
-        <input type="text" id="nama_lapangan" name="nama_lapangan" required><br><br>
-
-        <label for="jenis_lapangan">Jenis Lapangan:</label><br>
-        <select name="jenis_lapangan" id="jenis_lapangan">
-            <option value="Futsal">Futsal</option>
-            <option value="Badminton">Badminton</option>
-        </select><br><br>
-
-        <label for="harga_sewa">Harga Sewa:</label><br>
-        <input type="number" id="harga_sewa" name="harga_sewa" required><br><br>
-
-        <label for="kapasitas_pemain">Kapasitas Pemain:</label><br>
-        <input type="number" id="kapasitas_pemain" name="kapasitas_pemain" required><br><br>
-
-        <input type="submit" value="Tambah Lapangan">
-    </form>
-
-    <!-- Tombol kembali ke dashboard admin -->
-    <a href="admin_dashboard.php">Kembali ke Dashboard Admin</a>
+    <div class="container mt-5">
+        <h1 class="text-center">Tambah Lapangan</h1>
+        <?php if (!empty($success_message)): ?>
+            <div class="alert alert-success">
+                <?php echo $success_message; ?>
+            </div>
+        <?php elseif (!empty($error_message)): ?>
+            <div class="alert alert-danger">
+                <?php echo $error_message; ?>
+            </div>
+        <?php endif; ?>
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" class="mt-4">
+            <div class="form-group">
+                <label for="nama_lapangan">Nama Lapangan:</label>
+                <input type="text" id="nama_lapangan" name="nama_lapangan" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="jenis_lapangan">Jenis Lapangan:</label>
+                <select name="jenis_lapangan" id="jenis_lapangan" class="form-control">
+                    <option value="VIP">VIP</option>
+                    <option value="Basic">Basic</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="harga_sewa">Harga Sewa:</label>
+                <input type="number" id="harga_sewa" name="harga_sewa" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Tambah Lapangan</button>
+        </form>
+        <a href="admin_dashboard.php" class="btn btn-secondary mt-3">Kembali ke Dashboard Admin</a>
+    </div>
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
